@@ -8,3 +8,11 @@ The code chunk below loads Tidyverse library.
 ```{r Library}
 library(tidyverse)
 ```
+
+##Problem 1
+Reading in Mr. Trash Wheel dataset.
+
+```{r}
+trash_wheel_df = read_excel ("./data/")
+```
+
