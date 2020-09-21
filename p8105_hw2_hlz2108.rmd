@@ -3,16 +3,18 @@ title: "HW 2 for P8105 - hlz2108"
 output: github_document
 ---
 
-The code chunk below loads Tidyverse library.
+The code chunk below loads libraries.
 
 ```{r Library}
 library(tidyverse)
+library(readxl)
 ```
 
 ##Problem 1
+
 Reading in Mr. Trash Wheel dataset.
 
 ```{r}
-trash_wheel_df = read_excel ("./data/")
+trash_wheel_df = read_excel ("./data/Trash_Wheel.xlsx")
 ```
 
