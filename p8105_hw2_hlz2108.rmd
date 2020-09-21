@@ -16,6 +16,9 @@ Reading in Mr. Trash Wheel dataset.
 
 ```{r Trash_Wheel_df}
 trash_wheel_df = read_excel("./data/Trash_Wheel.xlsx")
+names(trash_wheel_df)
+trash_wheel_df = janitor::clean_names(trash_wheel_df)
+names(trash_wheel_df)
 ```
 
 ##Problem 2
