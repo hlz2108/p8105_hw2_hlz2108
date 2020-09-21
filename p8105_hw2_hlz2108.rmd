@@ -14,7 +14,25 @@ library(readxl)
 
 Reading in Mr. Trash Wheel dataset.
 
-```{r}
-trash_wheel_df = read_excel ("./data/Trash_Wheel.xlsx")
+```{r Trash_Wheel_df}
+trash_wheel_df = read_excel("./data/Trash_Wheel.xlsx")
+```
+
+##Problem 2
+
+Reading in NYC Transit Data.
+
+```{r NYC_Transit_df}
+NYC_transit_df = read_csv("./data/NYC_Transit_Data.csv")
+```
+
+##Problem 3
+
+Reading in FiveThirtyEight Data.
+
+```{r FiveThirtyEight_df}
+pols_month_df = read_csv(".data/fivethirtyeight_datasets/pols-month.csv")
+unemployment_df = read_csv(".data/fivethirtyeight_datasets/unemployment.csv")
+snp_df = read_csv(".data/fivethirtyeight_datasets/snp.csv")
 ```
 
