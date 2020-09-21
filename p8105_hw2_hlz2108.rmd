@@ -31,8 +31,8 @@ NYC_transit_df = read_csv("./data/NYC_Transit_Data.csv")
 Reading in FiveThirtyEight Data.
 
 ```{r FiveThirtyEight_df}
-pols_month_df = read_csv(".data/fivethirtyeight_datasets/pols-month.csv")
-unemployment_df = read_csv(".data/fivethirtyeight_datasets/unemployment.csv")
-snp_df = read_csv(".data/fivethirtyeight_datasets/snp.csv")
+pols_month_df = read_csv("./data/fivethirtyeight_datasets/pols-month.csv")
+unemployment_df = read_csv("./data/fivethirtyeight_datasets/unemployment.csv")
+snp_df = read_csv("./data/fivethirtyeight_datasets/snp.csv")
 ```
 
