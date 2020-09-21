@@ -1,21 +1,10 @@
 ---
-title: "Simple document"
-output: html_document
+title: "HW 2 for P8105 - hlz2108"
+output: github_document
 ---
 
-I'm an R Markdown document! 
+The code chunk below loads Tidyverse library.
 
-# Section 1
-
-Here's a **code chunk** that samples from 
-a _normal distribution_:
-
-```{r}
-samp = rnorm(100)
-length(samp)
+```{r Library}
+library(tidyverse)
 ```
-
-# Section 2
-
-I can take the mean of the sample, too!
-The mean is `r mean(samp)`.
