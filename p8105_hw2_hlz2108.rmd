@@ -5,7 +5,7 @@ output: github_document
 
 The code chunk below loads libraries.
 
-```{r Library}
+```{r Library_Setup}
 library(tidyverse)
 library(readxl)
 ```
@@ -15,11 +15,62 @@ library(readxl)
 Reading in Mr. Trash Wheel dataset.
 
 ```{r Trash_Wheel_df}
-trash_wheel_df = read_excel("./data/Trash_Wheel.xlsx")
-names(trash_wheel_df)
-trash_wheel_df = janitor::clean_names(trash_wheel_df)
-names(trash_wheel_df)
+trash_wheel_df =
+  read_excel(
+    "./data/Trash_Wheel.xlsx",
+    sheet = "Mr. Trash Wheel",
+    range = cell_cols ("A:N")) %>%
+  janitor::clean_names() %>% 
+  drop_na(dumpster) %>% 
+  mutate(
+    sports_balls = round(sports_balls),
+    sports_balls = as.integer(sports_balls)
+  ) %>% 
+view
 ```
+
+Read precipitation data!
+
+```{r Precipitation_df}
+precip_2018 = 
+ read_excel(
+    "./data/Trash_Wheel.xlsx",
+    sheet = "2018 Precipitation",
+    skip = 1
+ ) %>% 
+  janitor::clean_names() %>% 
+  drop_na(month) %>% 
+  mutate(year = 2018) %>% 
+  relocate(year)
+  
+precip_2017 = 
+ read_excel(
+    "./data/Trash_Wheel.xlsx",
+    sheet = "2017 Precipitation",
+    skip = 1
+ ) %>% 
+  janitor::clean_names() %>% 
+  drop_na(month) %>% 
+  mutate(year = 2017) %>% 
+  relocate(year)
+```
+
+Now combine annual precipitation
+
+```{r Combine_Precip}
+month_df = 
+  tibble(
+    month = 1:12,
+    month_name = month.name
+  )
+
+precip_df =
+  bind_rows(precip_2018,precip_2017)
+
+left_join(precip_df, month_df, by = "month")
+```
+
+This data set contains information from the Mr. Trashwheel trash collector in Baltimore, Maryland. As trash enters the inner harbor, the trashwheel collects that trash, and stores it in a dumpster. The dataset contains information on year, month, and trash collected, including some specific kinds of trash. There are a total of `r nrow(trash_wheel_df)` rows in our final dataset. Additional data sheets include month precipitation data. 
 
 ##Problem 2
 
