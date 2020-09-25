@@ -95,6 +95,21 @@ There are a total of r distinct(NYC_transit_df, station_name) distinct stations.
 
 The proportion of station entrances/exits without vending allow entrance are 
  
+
+```{r Transit}
+transit_df = 
+  NYC_transit_df %>% 
+  mutate_at(vars(route1:route11), replace_na, 'None') %>% 
+  pivot_longer(
+    route1:route11,
+    names_to = "route number",
+    values_to = "route name") %>% 
+  view()
+
+transit_df
+
+```
+
 ##Problem 3
 
 Reading in FiveThirtyEight Data.
