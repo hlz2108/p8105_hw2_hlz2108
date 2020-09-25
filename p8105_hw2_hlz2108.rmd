@@ -1,5 +1,6 @@
 ---
 title: "HW 2 for P8105 - hlz2108"
+author: "Helen Zhang"
 output: github_document
 ---
 
@@ -79,43 +80,56 @@ Reading in and cleaning NYC Transit Data.
 ```{r NYC_Transit_df}
 NYC_transit_df = 
   read_csv(
-    "./data/NYC_Transit_Data.csv") %>%
+    "./data/NYC_Transit_Data.csv", col_types = cols(
+      Route8 = col_character(),
+      Route9 = col_character(),
+      Route10 = col_character(),
+      Route11 = col_character()
+    ))%>%
   janitor::clean_names() %>%
   select(line, station_name, station_latitude, station_longitude, route1:route11, entry, vending, entrance_type, ada) %>% 
   mutate(entry = recode(entry,`YES` = TRUE, `NO` = FALSE )) %>% 
 view
+
+NYC_transit_df
 ```
 
-This data set contains information related to each entrance and exit for each subway station in NYC. In our final dataset, I have only included the following variables: `r names(NYC_transit_df)` and removed several others, such as entrance and exit locations. In cleaning the data, the entry variable was converted into a logical variable. There are a total of `r nrow(NYC_transit_df)` rows and `r ncol(NYC_transit_df)` columns in our final dataset. 
 
-The data is not tidy in the final dataset as there are many NA variables in the route columns. Also, route number is spread across 11 separate columns instead of being condensed into 1.
+`r filter(NYC_transit_df, ada == "TRUE") %>% distinct( station_name) %>% nrow` stations are ADA compliant.
 
-There are a total of `r count(distinct(NYC_transit_df, line, station_name))` distinct stations.
+The proportion of station entrances/exits without vending that allow entrance are `r (filter(NYC_transit_df, vending == "NO" & entry == "TRUE") %>% nrow) / (filter(NYC_transit_df, vending == "NO") %>% nrow)`.
 
-`r sum(pull(NYC_transit_df,ada), na.rm=FALSE)` stations are ADA compliant.
-
-The proportion of station entrances/exits without vending that allow entrance are `r filter(NYC_transit_df, vending == "NO" & entry == "TRUE") %>% nrow / filter(NYC_transit_df, vending == "NO") %>% nrow`.
- 
-The code chunk below creates a dataset that tidies up the previous NYC Transit dataset, and reformats the data so that the route number and route name are distinct variables..
+The code chunk below creates a dataset that tidies up the previous NYC Transit dataset, and reformats the data so that the route number and route name are distinct variables.
 
 ```{r Transit_Tidy_df}
-transit_df = 
+transit_tidy_df=
   NYC_transit_df %>% 
-  mutate_at(vars(route1:route11), replace_na, 'None') %>% 
   pivot_longer(
     route1:route11,
     names_to = "route_number",
-    values_to = "route_name") %>% 
+    values_to = "route_line") %>% 
+  relocate("route_line") %>% 
+  drop_na(route_line) %>% 
+  select(-route_number) %>% 
   view()
 
-transit_df
+transit_tidy_df
 ```
+
+There are a total of `r count(distinct(transit_tidy_df, route_line, station_name))` distinct stations.
+
+`r filter(transit_tidy_df, ada == "TRUE") %>% distinct( station_name, route_line) %>% nrow` stations are ADA compliant.
+
+ 
+This data set contains information related to each entrance and exit for each subway station in NYC. In our final dataset, I have only included the following variables: `r names(transit_tidy_df)` and removed several others, such as entrance and exit locations. In cleaning the data, the entry variable was converted into a logical variable. There are a total of `r nrow(transit_tidy_df)` rows and `r ncol(transit_tidy_df)` columns in our final dataset. 
+
+The data is tidy in the final dataset as route line has been condensed into 1 variable and the NA responses are no longer present.
 
 The code chunk below creates a dataset that contains only stations that serve the A Train.
 
 ```{r ATrain_df}
 ATrain_df = 
-  filter(transit_df, route_name == "A")
+  filter(transit_tidy_df, route_line == "A")
 ```
 
 There are `r count(distinct(ATrain_df, line, station_name))` distinct stations that serve the A train.
@@ -126,8 +140,17 @@ Of the stations that serve the A train, `r sum(pull(ATrain_df,ada), na.rm=FALSE)
 
 Reading in FiveThirtyEight Data.
 
-```{r FiveThirtyEight_df}
-pols_month_df = read_csv("./data/fivethirtyeight_datasets/pols-month.csv")
+```{r pols_month_df}
+pols_month_df = 
+  read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>%
+  janitor::clean_names() %>% 
+  separate(mon, into = c("year", "month", "date"))
+
+
+
+```
+
+```{r}
 unemployment_df = read_csv("./data/fivethirtyeight_datasets/unemployment.csv")
 snp_df = read_csv("./data/fivethirtyeight_datasets/snp.csv")
 ```
