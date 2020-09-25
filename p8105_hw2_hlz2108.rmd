@@ -74,12 +74,27 @@ This data set contains information from the Mr. Trashwheel trash collector in Ba
 
 ##Problem 2
 
-Reading in NYC Transit Data.
+Reading in and cleaning NYC Transit Data.
 
 ```{r NYC_Transit_df}
-NYC_transit_df = read_csv("./data/NYC_Transit_Data.csv")
+NYC_transit_df = 
+  read_csv(
+    "./data/NYC_Transit_Data.csv") %>%
+  janitor::clean_names() %>%
+  select(line, station_name, station_latitude, station_longitude, route1:route11, entry, vending, entrance_type, ada) %>% 
+view
 ```
 
+mutate(entry = recode(entry, "yes" = T, "no" = F))
+
+This data set contains information related to each entrance and exit for each subway station in NYC. In our final dataset, I have only included the following variables: `r names(NYC_transit_df)` and removed several others, such as entrance and exit locations. In cleaning the data, the entry variable was converted into a logical variable. There are a total of `r nrow(NYC_transit_df)` rows and `r ncol(NYC_transit_df)` columns in our final dataset. The data is not very tidy in the final dataset as there are many NA variables.
+
+There are a total of r distinct(NYC_transit_df, station_name) distinct stations.
+
+`r sum(pull(NYC_transit_df,ada), na.rm=FALSE)` stations are ADA compliant.
+
+The proportion of station entrances/exits without vending allow entrance are 
+ 
 ##Problem 3
 
 Reading in FiveThirtyEight Data.
