@@ -153,7 +153,7 @@ pols_month_df =
 month_df = 
 	tibble(
 		month = c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"),
-		month_name = month.name
+		month_name = month.abb
 	)
 
 pols_tidy_df = 
@@ -175,7 +175,7 @@ pols_tidy_df =
 
 Cleaning and tidying the snp.csv dataset.
 
-```{r}
+```{r snp_df}
 snp_df = 
   read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% 
   janitor::clean_names() %>% 
@@ -185,7 +185,7 @@ snp_df =
 month_df = 
 	tibble(
 		month = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"),
-		month_name = month.name
+		month_name = month.abb
 	)
 
 snp_tidy_df = 
@@ -197,10 +197,18 @@ snp_tidy_df =
   view
 ```
 
+Cleaning up and tidying unemployment dataset.
 
-
-```{r}
-unemployment_df = read_csv("./data/fivethirtyeight_datasets/unemployment.csv")
-
+```{r unemployment_df}
+unemployment_df =
+  read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>% 
+  pivot_longer(
+    Jan:Dec,
+    names_to = "month",
+    values_to = "unemployment") %>% 
+  rename (year = Year) %>% 
+  view
 ```
+
+
 
