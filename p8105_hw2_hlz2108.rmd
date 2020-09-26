@@ -142,7 +142,9 @@ Of the stations that serve the A train, `r sum(pull(ATrain_df,ada), na.rm=FALSE)
 
 ##Problem 3
 
-Reading in FiveThirtyEight Data.
+#Reading in FiveThirtyEight Data.
+
+Cleaning and tidying up pols_month dataset.
 
 ```{r pols_month_df}
 pols_month_df = 
@@ -191,7 +193,7 @@ month_df =
 snp_tidy_df = 
 	left_join(snp_df, month_df, by = "month") %>%
   arrange(year, month) %>% 
-  select(-month) %>% 
+  select(-month, -day) %>% 
   rename(month = month_name) %>%  
   relocate(year, month) %>% 
   view
@@ -201,13 +203,26 @@ Cleaning up and tidying unemployment dataset.
 
 ```{r unemployment_df}
 unemployment_df =
-  read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>% 
+  read_csv("./data/fivethirtyeight_datasets/unemployment.csv", col_types = cols(
+    Year = col_character()
+    ))%>%
   pivot_longer(
     Jan:Dec,
     names_to = "month",
-    values_to = "unemployment") %>% 
-  rename (year = Year) %>% 
-  view
+    values_to = "unemployment") %>%
+  rename(year = Year) %>% 
+    view
+```
+
+
+Merging datasets together!
+
+```{r merging}
+snp_pols_df = 
+  left_join(pols_tidy_df, snp_tidy_df, by = c("year" = "year", "month" = "month")) %>% view
+
+FiveThirtyEight_df = 
+  left_join(snp_pols_df, unemployment_df, by = c("year" = "year", "month" = "month")) %>% view
 ```
 
 
