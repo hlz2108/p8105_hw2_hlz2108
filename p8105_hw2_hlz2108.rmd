@@ -148,7 +148,7 @@ Reading in FiveThirtyEight Data.
 pols_month_df = 
   read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>%
   janitor::clean_names() %>% 
-  separate(mon, into = c("year", "month", "date")) %>% view
+  separate(mon, into = c("year", "month", "day")) %>% view
 
 month_df = 
 	tibble(
@@ -165,18 +165,42 @@ pols_tidy_df =
     names_to = "President",
     values_to = "President_value") %>% 
   mutate(President = recode(President, `prez_gop` = 'gop', `prez_dem` = 'dem')) %>% 
-  relocate(President) %>% 
   drop_na(President_value) %>% 
-  select(-President_value, -month) %>% 
+  arrange(year, month) %>% 
+  select(-President_value, -month, -day) %>%
+  rename(month = month_name) %>% 
+  relocate(year, month) %>% 
   view()
 ```
 
+Cleaning and tidying the snp.csv dataset.
 
+```{r}
+snp_df = 
+  read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% 
+  janitor::clean_names() %>% 
+  separate(date, into = c("month", "day", "year")) %>%
+  view
+
+month_df = 
+	tibble(
+		month = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"),
+		month_name = month.name
+	)
+
+snp_tidy_df = 
+	left_join(snp_df, month_df, by = "month") %>%
+  arrange(year, month) %>% 
+  select(-month) %>% 
+  rename(month = month_name) %>%  
+  relocate(year, month) %>% 
+  view
+```
 
 
 
 ```{r}
 unemployment_df = read_csv("./data/fivethirtyeight_datasets/unemployment.csv")
-snp_df = read_csv("./data/fivethirtyeight_datasets/snp.csv")
+
 ```
 
