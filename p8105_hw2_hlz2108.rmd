@@ -94,12 +94,14 @@ NYC_transit_df =
   select(line, station_name, station_latitude, station_longitude, route1:route11, entry, vending, entrance_type, ada) %>% 
   mutate(entry = recode(entry,`YES` = TRUE, `NO` = FALSE )) %>% 
 view
-
-NYC_transit_df
 ```
 
+This data set contains information related to each entrance and exit for each subway station in NYC. In this first code chunk, I have kept only information on the station name, the line it is on, latitude and longitudinal coordinates, routes they serve, if entry is allowed and what type of entry it is, and whether the station is ADA compliant. To clean this dataset, I first reformatted the names using the janitor package. I then recoded the entry variable as a logical vector, so that entry was coded as either True or False instead of Yes or No. After cleaning the data, the dimensions of the data set are `r nrow(NYC_transit_df)` rows by `r ncol(NYC_transit_df)` columns.
+This dataset is not tidy at the moment as there are still a number of NA values and routes are spread across 11 columns and not condensed into 1.
 
-`r filter(NYC_transit_df, ada == "TRUE") %>% distinct( station_name) %>% nrow` stations are ADA compliant.
+There are a total of `r count(distinct(NYC_transit_df, station_name, line))` distinct stations.
+
+`r filter(NYC_transit_df, ada == "TRUE") %>% distinct(station_name, line) %>% nrow` stations are ADA compliant.
 
 The proportion of station entrances/exits without vending that allow entrance are `r (filter(NYC_transit_df, vending == "NO" & entry == "TRUE") %>% nrow) / (filter(NYC_transit_df, vending == "NO") %>% nrow)`.
 
@@ -120,14 +122,7 @@ transit_tidy_df=
 transit_tidy_df
 ```
 
-There are a total of `r count(distinct(transit_tidy_df, route_line, station_name))` distinct stations.
-
-`r filter(transit_tidy_df, ada == "TRUE") %>% distinct( station_name, route_line) %>% nrow` stations are ADA compliant.
-
- 
-This data set contains information related to each entrance and exit for each subway station in NYC. In our final dataset, I have only included the following variables: `r names(transit_tidy_df)` and removed several others, such as entrance and exit locations. In cleaning the data, the entry variable was converted into a logical variable. There are a total of `r nrow(transit_tidy_df)` rows and `r ncol(transit_tidy_df)` columns in our final dataset. 
-
-The data is tidy in the final dataset as route line has been condensed into 1 variable and the NA responses are no longer present.
+In our final dataset, there are a total of `r nrow(transit_tidy_df)` rows and `r ncol(transit_tidy_df)` columns. The data is tidy in the final dataset as route line has been condensed into 1 variable and the NA responses are no longer present.
 
 The code chunk below creates a dataset that contains only stations that serve the A Train.
 
@@ -136,9 +131,9 @@ ATrain_df =
   filter(transit_tidy_df, route_line == "A")
 ```
 
-There are `r count(distinct(ATrain_df, line, station_name))` distinct stations that serve the A train.
+There are `r count(distinct(ATrain_df, station_name, line))` distinct stations that serve the A train.
 
-Of the stations that serve the A train, `r sum(pull(ATrain_df,ada), na.rm=FALSE)` stations are ADA compliant.
+Of the stations that serve the A train, `r filter(ATrain_df, ada == TRUE) %>% distinct(station_name, line) %>% nrow`stations are ADA compliant.
 
 ## Problem 3
 
@@ -205,7 +200,7 @@ Cleaning up and tidying unemployment dataset.
 unemployment_tidy_df =
   read_csv("./data/fivethirtyeight_datasets/unemployment.csv", col_types = cols(
     Year = col_character()
-    ))%>%
+    )) %>%
   pivot_longer(
     Jan:Dec,
     names_to = "month",
